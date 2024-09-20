@@ -1,0 +1,36 @@
+{
+  "name": "vncore/front",
+  "description": "Process front for vncore",
+  "keywords": ["vncore","front"],
+  "homepage": "https://vncore.net",
+  "license": "MIT",
+  "authors": [
+      {
+          "name": "VnCore",
+          "email": "vncore.net@gmail.com"
+      }
+  ],
+  "require": {
+      "php": "^8.2"
+  },
+
+  "autoload": {
+      "psr-4": {
+         "Vncore\\Front\\": "src/"
+      }
+  },
+
+  "extra": {
+      "laravel": {
+          "dont-discover": [
+          ],
+          "providers": [
+            "Vncore\\Front\\FrontServiceProvider"
+          ],
+          "aliases": {
+          }
+      }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
