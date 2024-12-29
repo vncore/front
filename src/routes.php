@@ -8,16 +8,10 @@ Route::group(
         'middleware' => VNCORE_FRONT_MIDDLEWARE,
     ],
     function () use($langUrl){
-        foreach (glob(__DIR__ . '/Routes/Front/*.php') as $filename) {
+
+        if (file_exists($filename = __DIR__ . '/Routes/front.php')) {
             $this->loadRoutesFrom($filename);
         }
-
-        if (file_exists(app_path('Vncore/Admin/Controllers/HomeController.php'))) {
-            $nameSpaceHome = 'App\Vncore\Front\Controllers';
-        } else {
-            $nameSpaceHome = 'Vncore\Front\Controllers';
-        }
-        Route::get('/', $nameSpaceHome.'\HomeController@index')->name('front.home');
         
         //Language
         Route::get('locale/{code}', function ($code) {
@@ -35,7 +29,7 @@ Route::group(
         'middleware' => VNCORE_ADMIN_MIDDLEWARE,
     ],
     function () {
-        foreach (glob(__DIR__ . '/Routes/Admin/*.php') as $filename) {
+        if (file_exists($filename = __DIR__ . '/Routes/admin.php')) {
             $this->loadRoutesFrom($filename);
         }
     }

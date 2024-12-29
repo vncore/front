@@ -30,12 +30,16 @@ class FrontInstall extends Command
      */
     public function handle()
     {
+        // Uninstall vncore front before install
+        $this->call('vncore:front-uninstall');
+        
+        // Install vncore front
         \DB::connection(VNCORE_DB_CONNECTION)->table('migrations')->where('migration', '00_00_00_create_tables_front')->delete();
-        // $this->call('migrate', ['--path' => '/vendor/vncore/front/src/DB/migrations/00_00_00_create_tables_front.php']);
-        // $this->info('---------------> Migrate schema Front default done!');
+        $this->call('migrate', ['--path' => '/vendor/vncore/front/src/DB/migrations/00_00_00_create_tables_front.php']);
+        $this->info('---------------> Migrate schema Front default done!');
 
-        // $this->call('db:seed', ['--class' => '\Vncore\Front\DB\seeders\DataFrontDefaultSeeder', '--force' => true]);
-        // $this->info('---------------> Seeding database Front default done!');
+        $this->call('db:seed', ['--class' => '\Vncore\Front\DB\seeders\DataFrontDefaultSeeder', '--force' => true]);
+        $this->info('---------------> Seeding database Front default done!');
 
         $this->welcome();
     }

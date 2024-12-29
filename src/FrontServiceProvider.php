@@ -7,6 +7,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\DB;
 use Vncore\Front\Middleware\CheckDomain;
 use Vncore\Front\Commands\FrontInstall;
+use Vncore\Front\Commands\FrontUninstall;
+
 class FrontServiceProvider extends ServiceProvider
 {
 
@@ -17,7 +19,10 @@ class FrontServiceProvider extends ServiceProvider
             if (!is_dir($directory = app_path('Vncore/Front/Api'))) {
                 mkdir($directory, 0755, true);
             }
-            if (!is_dir($directory = app_path('Vncore/Front/Admin'))) {
+            if (!is_dir($directory = app_path('Vncore/Front/Controllers'))) {
+                mkdir($directory, 0755, true);
+            }
+            if (!is_dir($directory = app_path('Vncore/Front/Controllers/Admin'))) {
                 mkdir($directory, 0755, true);
             }
         } catch (\Throwable $e) {
@@ -39,6 +44,7 @@ class FrontServiceProvider extends ServiceProvider
         try {
             $this->commands([
                 FrontInstall::class,
+                FrontUninstall::class,
             ]);
         } catch (\Throwable $e) {
             $msg = '#VNCORE-FRONT:: '.$e->getMessage().' - Line: '.$e->getLine().' - File: '.$e->getFile();

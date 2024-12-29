@@ -19,18 +19,20 @@ class DataFrontDefaultSeeder extends Seeder
         // Preparing update data version
         $this->updateDataVersion();
 
-        $db = DB::connection(VNCORE_DB_CONNECTION);
-
-
-        $idBlockAdmin = AdminMenu::insertGetId(
-            [
-                'parent_id' => 0,
-                'sort'      => 5,
-                'title'     => 'admin.menu_titles.ADMIN_CONTENT',
-                'icon'      => 'nav-icon fas fa-city',
-                'key'       => 'ADMIN_CONTENT',
-            ]
-        );
+        $checkIdBlock = AdminMenu::where('key', 'ADMIN_CONTENT')->first();
+        if (!$checkIdBlock) {
+            $idBlockAdmin = AdminMenu::insertGetId(
+                [
+                    'parent_id' => 0,
+                    'sort'      => 5,
+                    'title'     => 'admin.menu_titles.ADMIN_CONTENT',
+                    'icon'      => 'nav-icon fas fa-city',
+                    'key'       => 'ADMIN_CONTENT',
+                ]
+            );
+        } else {
+            $idBlockAdmin = $checkIdBlock->id;
+        }
 
         AdminMenu::insertOrIgnore(
             [
