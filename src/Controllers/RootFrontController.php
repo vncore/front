@@ -5,12 +5,16 @@ use App\Http\Controllers\Controller;
 
 class RootFrontController extends Controller
 {
+    public $vncore_templatePathAdmin;
+    public $vncore_templatePathFront;
     public $templatePath;
     public $templateFile;
     public function __construct()
     {
         $this->templatePath = 'templates.' . vncore_store_info('template');
         $this->templateFile = 'templates.' . vncore_store_info('template');
+        $this->vncore_templatePathAdmin = config('vncore-config.admin.path_view').'::';
+        $this->vncore_templatePathFront = config('vncore-config.front.path_view').'::';
     }
         /**
      * Default page not found

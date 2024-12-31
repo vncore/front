@@ -100,6 +100,8 @@ class FrontServiceProvider extends ServiceProvider
                 exit;
             }
 
+            $this->loadViewsFrom(__DIR__.'/Views', config('vncore-config.front.path_view'));
+
             //Route Api
             try {
                 if (config('vncore-config.env.VNCORE_API_MODE')) {
@@ -214,7 +216,7 @@ class FrontServiceProvider extends ServiceProvider
     protected function registerPublishing()
     {
         if ($this->app->runningInConsole()) {
-            //
+            $this->publishes([__DIR__.'/Views' => resource_path('views/vendor/'.config('vncore-config.front.path_view'))], 'vncore:view-front');
         }
     }
 

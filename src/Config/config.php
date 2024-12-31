@@ -14,5 +14,8 @@ return [
             //If value is empty, it will not be displayed, as dommain.com/abc.html
             'VNCORE_SEO_LANG' => env('VNCORE_SEO_LANG', 0),
         ],
+
+        //Prefix path view admin
+        'path_view'           => 'vncore-front',
     ],
 ];

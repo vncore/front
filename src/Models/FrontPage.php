@@ -4,8 +4,8 @@ namespace Vncore\Front\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Cache;
-use Vncore\Front\Models\FrontStore;
-
+use Vncore\Core\Admin\Models\AdminStore;
+use Vncore\Front\Models\FrontPageStore;
 
 class FrontPage extends Model
 {
@@ -19,7 +19,7 @@ class FrontPage extends Model
 
     public function stores()
     {
-        return $this->belongsToMany(FrontStore::class, FrontPageStore::class, 'page_id', 'store_id');
+        return $this->belongsToMany(AdminStore::class, FrontPageStore::class, 'page_id', 'store_id');
     }
 
     public function descriptions()
@@ -56,7 +56,7 @@ class FrontPage extends Model
     */
     public function getThumb()
     {
-        return sc_image_get_path_thumb($this->image);
+        return vncore_image_get_path_thumb($this->image);
     }
 
     /*
@@ -64,12 +64,12 @@ class FrontPage extends Model
     */
     public function getImage()
     {
-        return sc_image_get_path($this->image);
+        return vncore_image_get_path($this->image);
     }
 
     public function getUrl($lang = null)
     {
-        return sc_route('page.detail', ['alias' => $this->alias, 'lang' => $lang ?? app()->getLocale()]);
+        return vncore_route('page.detail', ['alias' => $this->alias, 'lang' => $lang ?? app()->getLocale()]);
     }
 
     /**
@@ -95,7 +95,7 @@ class FrontPage extends Model
         $storeId = config('app.storeId');
         if (vncore_store_check_multi_domain_installed()) {
             $tablePageStore = (new FrontPageStore)->getTable();
-            $tableStore = (new FrontStore)->getTable();
+            $tableStore = (new AdminStore)->getTable();
             $page = $page->join($tablePageStore, $tablePageStore.'.page_id', $this->getTable() . '.id');
             $page = $page->join($tableStore, $tableStore . '.id', $tablePageStore.'.store_id');
             $page = $page->where($tableStore . '.status', '1');
@@ -124,17 +124,17 @@ class FrontPage extends Model
                 $page->stores()->detach();
 
                 //Delete custom field
-                (new FrontCustomFieldDetail)
-                ->join(SC_DB_PREFIX.'front_custom_field', SC_DB_PREFIX.'front_custom_field.id', SC_DB_PREFIX.'front_custom_field_detail.custom_field_id')
-                ->where(SC_DB_PREFIX.'front_custom_field_detail.rel_id', $page->id)
-                ->where(SC_DB_PREFIX.'front_custom_field.type', 'shop_page')
+                (new \Vncore\Core\Admin\Models\AdminCustomFieldDetail)
+                ->join(VNCORE_DB_PREFIX.'admin_custom_field', VNCORE_DB_PREFIX.'admin_custom_field.id', VNCORE_DB_PREFIX.'admin_custom_field_detail.custom_field_id')
+                ->where(VNCORE_DB_PREFIX.'admin_custom_field_detail.rel_id', $page->id)
+                ->where(VNCORE_DB_PREFIX.'admin_custom_field.type', 'shop_page')
                 ->delete();
             }
         );
         //Uuid
         static::creating(function ($model) {
             if (empty($model->{$model->getKeyName()})) {
-                $model->{$model->getKeyName()} = sc_generate_id($type = 'shop_page');
+                $model->{$model->getKeyName()} = vncore_generate_id($type = 'shop_page');
             }
         });
     }
@@ -165,7 +165,7 @@ class FrontPage extends Model
         $storeId = config('app.storeId');
         if (vncore_check_multi_shop_installed()) {
             $tablePageStore = (new FrontPageStore)->getTable();
-            $tableStore = (new FrontStore)->getTable();
+            $tableStore = (new AdminStore)->getTable();
             $query = $query->join($tablePageStore, $tablePageStore.'.page_id', $this->getTable() . '.id');
             $query = $query->join($tableStore, $tableStore . '.id', $tablePageStore.'.store_id');
             $query = $query->where($tableStore . '.status', '1');
@@ -173,11 +173,11 @@ class FrontPage extends Model
         }
 
         //search keyword
-        if ($this->sc_keyword !='') {
+        if ($this->vncore_keyword !='') {
             $query = $query->where(function ($sql) use ($tableDescription) {
-                $sql->where($tableDescription . '.title', 'like', '%' . $this->sc_keyword . '%')
-                ->orWhere($tableDescription . '.keyword', 'like', '%' . $this->sc_keyword . '%')
-                ->orWhere($tableDescription . '.description', 'like', '%' . $this->sc_keyword . '%');
+                $sql->where($tableDescription . '.title', 'like', '%' . $this->vncore_keyword . '%')
+                ->orWhere($tableDescription . '.keyword', 'like', '%' . $this->vncore_keyword . '%')
+                ->orWhere($tableDescription . '.description', 'like', '%' . $this->vncore_keyword . '%');
             });
         }
 
@@ -199,5 +199,55 @@ class FrontPage extends Model
         }
 
         return $query;
+    }
+
+    public static function getPageListAdmin(array $dataSearch, $storeId = null)
+    {
+        $keyword          = $dataSearch['keyword'] ?? '';
+        $sort_order       = $dataSearch['sort_order'] ?? '';
+        $arrSort          = $dataSearch['arrSort'] ?? '';
+        $tableDescription = (new FrontPageDescription)->getTable();
+        $tablePage     = (new FrontPage)->getTable();
+
+        $pageList = (new FrontPage)
+            ->leftJoin($tableDescription, $tableDescription . '.page_id', $tablePage . '.id')
+            ->where($tableDescription . '.lang', vncore_get_locale());
+
+        $tablePage = (new FrontPage)->getTable();
+        if ($storeId) {
+            $tablePageStore = (new FrontPageStore)->getTable();
+            $pageList = $pageList->leftJoin($tablePageStore, $tablePageStore . '.page_id', $tablePage . '.id');
+            $pageList = $pageList->where($tablePageStore . '.store_id', $storeId);
+        }
+
+        if ($keyword) {
+            $pageList = $pageList->where(function ($sql) use ($tableDescription, $keyword) {
+                $sql->where($tableDescription . '.title', 'like', '%' . $keyword . '%');
+            });
+        }
+
+        if ($sort_order && array_key_exists($sort_order, $arrSort)) {
+            $field = explode('__', $sort_order)[0];
+            $sort_field = explode('__', $sort_order)[1];
+            $pageList = $pageList->orderBy($field, $sort_field);
+        } else {
+            $pageList = $pageList->orderBy($tablePage.'.created_at', 'desc');
+        }
+        $pageList = $pageList->paginate(20);
+
+        return $pageList;
+    }
+
+    public static function getPageAdmin($id, $storeId = null)
+    {
+        $data = self::where('id', $id);
+        if ($storeId) {
+            $tablePageStore = (new FrontPageStore)->getTable();
+            $tablePage = (new FrontPage)->getTable();
+            $data = $data->leftJoin($tablePageStore, $tablePageStore . '.page_id', $tablePage . '.id');
+            $data = $data->where($tablePageStore . '.store_id', $storeId);
+        }
+        $data = $data->first();
+        return $data;
     }
 }
