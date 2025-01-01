@@ -104,7 +104,7 @@ class FrontServiceProvider extends ServiceProvider
             }
 
             $this->loadViewsFrom(app_path().'/Vncore/Templates', 'VncoreTemplatePath');
-            $this->loadViewsFrom(__DIR__.'/Views', config('vncore-config.front.path_view'));
+            $this->loadViewsFrom(__DIR__.'/Views', 'vncore-front');
 
             //Route Api
             try {
