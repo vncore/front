@@ -1,4 +1,4 @@
-@extends($templatePath.'.layout')
+@extends($VncoreTemplatePath.'.layout')
 
 @section('block_main')
 <section class="section section-xl bg-default text-md-left">

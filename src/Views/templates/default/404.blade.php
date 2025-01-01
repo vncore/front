@@ -1,4 +1,4 @@
-@extends($templatePath.'.layout')
+@extends($VncoreTemplatePath.'.layout')
 
 @section('title', '404 - Không tìm thấy trang')
 
