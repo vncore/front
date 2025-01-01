@@ -156,7 +156,9 @@ class FrontServiceProvider extends ServiceProvider
     public function bootDefault()
     {
 
-        //
+        view()->share('vncore_templatePathFront', config('vncore-config.front.path_view').'::');
+        view()->share('templatePath', config('vncore-config.front.path_view').'::templates.' . vncore_store_info('template','default'));
+        view()->share('templateFile', 'Vncore/Templates/'.vncore_store_info('template','default'));
     }
 
     /**

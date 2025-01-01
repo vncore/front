@@ -44,9 +44,9 @@ class HomeController extends RootFrontController
     {
         $page = (new FrontPage)->getDetail($alias, $type = 'alias');
         if ($page) {
-            vncore_check_view($this->templatePath . '.screen.front_page');
+            vncore_check_view($this->templatePath . '.page');
             return view(
-                $this->templatePath . '.screen.front_page',
+                $this->templatePath . '.page',
                 array(
                     'title'       => $page->title,
                     'description' => $page->description,
