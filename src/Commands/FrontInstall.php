@@ -41,6 +41,9 @@ class FrontInstall extends Command
         $this->call('db:seed', ['--class' => '\Vncore\Front\DB\seeders\DataFrontDefaultSeeder', '--force' => true]);
         $this->info('---------------> Seeding database Front default done!');
 
+        $this->call('vendor:publish', ['--tag' => 'vncore:public-templates']);
+        $this->call('vendor:publish', ['--tag' => 'vncore:view-templates']);
+
         $this->welcome();
     }
 

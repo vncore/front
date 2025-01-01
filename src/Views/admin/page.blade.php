@@ -1,4 +1,4 @@
-@extends($vncore_templatePathAdmin.'layout')
+@extends('vncore-admin::layout')
 
 @section('main')
 <div class="row">
@@ -241,7 +241,7 @@
                             $customFields = isset($customFields) ? $customFields : [];
                             $fields = !empty($page) ? $page->getCustomFields() : [];
                         @endphp
-                        @includeIf($vncore_templatePathAdmin.'component.render_form_custom_field', ['customFields' => $customFields, 'fields' => $fields])
+                        @includeIf('vncore-admin::component.render_form_custom_field', ['customFields' => $customFields, 'fields' => $fields])
                         {{-- //Custom fields --}}
 
                     </div>
@@ -281,7 +281,7 @@
 @endpush
 
 @push('scripts')
-@include($vncore_templatePathAdmin.'component.ckeditor_js')
+@include('vncore-admin::component.ckeditor_js')
 
 
 <script type="text/javascript">

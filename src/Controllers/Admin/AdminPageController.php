@@ -72,7 +72,7 @@ class AdminPageController extends RootFrontAdminController
 
         $data['listTh'] = $listTh;
         $data['dataTr'] = $dataTr;
-        $data['pagination'] = $dataTmp->appends(request()->except(['_token', '_pjax']))->links($this->vncore_templatePathAdmin.'component.pagination');
+        $data['pagination'] = $dataTmp->appends(request()->except(['_token', '_pjax']))->links('vncore-admin::component.pagination');
         $data['resultItems'] = vncore_language_render('admin.result_item', ['item_from' => $dataTmp->firstItem(), 'item_to' => $dataTmp->lastItem(), 'total' =>  $dataTmp->total()]);
 
         //menuRight
@@ -104,7 +104,7 @@ class AdminPageController extends RootFrontAdminController
         //=menuSearch
 
 
-        return view($this->vncore_templatePathAdmin.'screen.list')
+        return view('vncore-admin::screen.list')
             ->with($data);
     }
 
@@ -125,7 +125,7 @@ class AdminPageController extends RootFrontAdminController
             'url_action'        => vncore_route_admin('admin_page.create'),
             'customFields'      => (new AdminCustomField)->getCustomField($type = 'page'),
         ];
-        return view($this->vncore_templatePathFront.'admin.page')
+        return view('vncore-front::admin.page')
             ->with($data);
     }
 
@@ -222,7 +222,7 @@ class AdminPageController extends RootFrontAdminController
             'page'              => $page,
             'url_action'        => vncore_route_admin('admin_page.post_edit', ['id' => $page['id']]),
         ];
-        return view($this->vncore_templatePathFront.'admin.page')
+        return view('vncore-front::admin.page')
             ->with($data);
     }
 

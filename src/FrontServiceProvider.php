@@ -25,6 +25,9 @@ class FrontServiceProvider extends ServiceProvider
             if (!is_dir($directory = app_path('Vncore/Front/Controllers/Admin'))) {
                 mkdir($directory, 0755, true);
             }
+            if (!is_dir($directory = app_path('Vncore/Templates'))) {
+                mkdir($directory, 0755, true);
+            }
         } catch (\Throwable $e) {
             $msg = '#VNCORE-FRONT:: '.$e->getMessage().' - Line: '.$e->getLine().' - File: '.$e->getFile();
             echo $msg;
@@ -100,6 +103,7 @@ class FrontServiceProvider extends ServiceProvider
                 exit;
             }
 
+            $this->loadViewsFrom(app_path().'/Vncore/Templates', 'VncoreTemplatePath');
             $this->loadViewsFrom(__DIR__.'/Views', config('vncore-config.front.path_view'));
 
             //Route Api
@@ -156,9 +160,8 @@ class FrontServiceProvider extends ServiceProvider
     public function bootDefault()
     {
 
-        view()->share('vncore_templatePathFront', config('vncore-config.front.path_view').'::');
-        view()->share('templatePath', config('vncore-config.front.path_view').'::templates.' . vncore_store_info('template','default'));
-        view()->share('templateFile', 'Vncore/Templates/'.vncore_store_info('template','default'));
+        view()->share('VncoreTemplatePath', 'VncoreTemplatePath::'.vncore_store_info('template','default'));
+        view()->share('VncoreTemplateFile', 'Vncore/Templates/'.vncore_store_info('template','default'));
     }
 
     /**
@@ -218,7 +221,9 @@ class FrontServiceProvider extends ServiceProvider
     protected function registerPublishing()
     {
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__.'/Views' => resource_path('views/vendor/'.config('vncore-config.front.path_view'))], 'vncore:view-front');
+            $this->publishes([__DIR__.'/public/Templates' => public_path('Vncore/Templates')], 'vncore:public-templates');
+            $this->publishes([__DIR__.'/Views/templates' => app_path('Vncore/Templates')], 'vncore:view-templates');
+            $this->publishes([__DIR__.'/Views/admin' => resource_path('views/vendor/vncore-front')], 'vncore:view-front');
         }
     }
 

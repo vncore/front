@@ -5,13 +5,11 @@ use App\Http\Controllers\Controller;
 
 class RootFrontController extends Controller
 {
-    public $vncore_templatePathAdmin;
     public $vncore_templatePathFront;
-    public $templatePath;
+    public $VncoreTemplatePath;
     public function __construct()
     {
-        $this->templatePath = config('vncore-config.front.path_view').'::templates.' . vncore_store_info('template','default');
-        $this->vncore_templatePathAdmin = config('vncore-config.admin.path_view').'::';
+        $this->VncoreTemplatePath = 'VncoreTemplatePath::' . vncore_store_info('template','default');
         $this->vncore_templatePathFront = config('vncore-config.front.path_view').'::';
     }
     /**
@@ -21,9 +19,9 @@ class RootFrontController extends Controller
      */
     public function pageNotFound()
     {
-        vncore_check_view( $this->templatePath . '.notfound');
+        vncore_check_view( $this->VncoreTemplatePath . '.notfound');
         return view(
-            $this->templatePath . '.notfound',
+            $this->VncoreTemplatePath . '.notfound',
                 [
                 'title' => vncore_language_render('front.page_not_found_title'),
                 'msg' => vncore_language_render('front.page_not_found'),
@@ -40,9 +38,9 @@ class RootFrontController extends Controller
      */
     public function itemNotFound()
     {
-        vncore_check_view( $this->templatePath . '.notfound');
+        vncore_check_view( $this->VncoreTemplatePath . '.notfound');
         return view(
-            $this->templatePath . '.notfound',
+            $this->VncoreTemplatePath . '.notfound',
             [
                 'title' => vncore_language_render('front.data_not_found_title'),
                 'msg' => vncore_language_render('front.data_not_found'),
