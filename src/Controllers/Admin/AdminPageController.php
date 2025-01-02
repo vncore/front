@@ -141,7 +141,7 @@ class AdminPageController extends RootFrontAdminController
         $data['alias'] = vncore_word_format_url($data['alias']);
         $data['alias'] = vncore_word_limit($data['alias'], 100);
         $arrValidation = [
-            'alias' => 'required|regex:/(^([0-9A-Za-z\-_]+)$)/|string|max:100',
+            'alias' => 'required|string|max:100',
             'descriptions.*.title' => 'required|string|max:200',
             'descriptions.*.keyword' => 'nullable|string|max:200',
             'descriptions.*.description' => 'nullable|string|max:500',
@@ -246,7 +246,7 @@ class AdminPageController extends RootFrontAdminController
             'descriptions.*.keyword' => 'nullable|string|max:200',
             'descriptions.*.description' => 'nullable|string|max:500',
             'descriptions.*.content' => 'nullable|string',
-            'alias' => 'required|regex:/(^([0-9A-Za-z\-_]+)$)/|string|max:100',
+            'alias' => 'required|string|max:100',
         ];
 
         $validator = Validator::make(
